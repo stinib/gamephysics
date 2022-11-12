@@ -210,8 +210,6 @@
   <ItemGroup>
     <ClCompile Include="..\Simulations\main.cpp" />
     <ClCompile Include="..\Simulations\MassSpringSystemSimulator.cpp" />
-    <ClCompile Include="..\Simulations\Point.cpp" />
-    <ClCompile Include="..\Simulations\Spring.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AntTweakBar\src\AntTweakBar_2017.vcxproj">
