@@ -70,7 +70,29 @@ void MassSpringSystemSimulator::notifyCaseChanged(int testCase)
 
 void MassSpringSystemSimulator::externalForcesCalculations(float timeElapsed) {} 
 
-void MassSpringSystemSimulator::simulateTimestep(float timeStep) {}
+void MassSpringSystemSimulator::simulateTimestep(float timeStep) {
+	switch (m_iTestCase)
+	{
+	case 0: 
+	default:
+		break;
+	}
+}
+
+// helper methods
+void MassSpringSystemSimulator::addPointsAndSprings(){}
+Vec3 MassSpringSystemSimulator::calculateVectorBetween(Vec3 src, Vec3 dts) {}
+float MassSpringSystemSimulator::calculateLengthOfVector(Vec3 d) {}
+Vec3 MassSpringSystemSimulator::normalize(Vec3 d, float len) {}
+Vec3 MassSpringSystemSimulator::calculateForceWithHooke(float k, float l, float L, Vec3 d_norm) {}
+Vec3 MassSpringSystemSimulator::calculateAcceleration(Vec3 f, float m) {}
+Vec3 MassSpringSystemSimulator::calculateEulerUpdate(Vec3 x_old, Vec3 dx_old, float h) {}
+
+// timestep simulator methods
+void MassSpringSystemSimulator::simulateEuler(float h) {}
+void MassSpringSystemSimulator::simulateMidpoint(float h) {}
+
+
 
 void MassSpringSystemSimulator::onClick(int x, int y) {
 	m_trackmouse.x = x;
@@ -132,5 +154,7 @@ void MassSpringSystemSimulator::addPointsAndSprings()
 	addMassPoint(Vec3(0, 0, 0), Vec3(-1, 0, 0), false);
 	addMassPoint(Vec3(0, 2, 0), Vec3(1, 0, 0), false);
 	addMassPoint(Vec3(1, 2, 0), Vec3(1, 0, 0), false);
+
 	addSpring(0, 1, 1);
+	addSpring(2, 1, 1);
 }

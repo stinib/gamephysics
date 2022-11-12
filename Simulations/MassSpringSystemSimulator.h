@@ -103,5 +103,15 @@ private:
 
 	// helper methods
 	void addPointsAndSprings();
+	Vec3 calculateVectorBetween(Vec3 src, Vec3 dts);
+	float calculateLengthOfVector(Vec3 d);
+	Vec3 normalize(Vec3 d, float len);
+	Vec3 calculateForceWithHooke(float k, float l, float L, Vec3 d_norm);
+	Vec3 calculateAcceleration(Vec3 f, float m);
+	Vec3 calculateEulerUpdate(Vec3 x_old, Vec3 dx_old, float h);
+
+	// timestep simulator methods
+	void simulateEuler(float h);
+	void simulateMidpoint(float h);
 };
 #endif
