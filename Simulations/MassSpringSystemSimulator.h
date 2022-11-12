@@ -88,7 +88,7 @@ private:
 	float m_fDamping;
 	int m_iIntegrator;
 
-	float currentTime{ 0 };
+	float currentTime;
 
 	vector<Point> points_;
 	vector<Spring> springs_;

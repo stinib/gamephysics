@@ -10,6 +10,8 @@ MassSpringSystemSimulator::MassSpringSystemSimulator() {
 	m_fDamping = 0;
 	m_iIntegrator = 0;
 
+	currentTime = -timestep;
+
 	points_ = vector<Point>();
 	springs_ = vector<Spring>();
 
@@ -74,11 +76,11 @@ void MassSpringSystemSimulator::externalForcesCalculations(float timeElapsed) {}
 
 void MassSpringSystemSimulator::simulateTimestep(float timeStep) {
 	currentTime += timestep;
+	if (currentTime > 0) return;
 
 	switch (m_iTestCase)
 	{
 	case 0: 
-		
 		simulateEuler1StepAndPrintResults(currentTime); 
 		break;
 	case 1: 
@@ -227,8 +229,8 @@ void MassSpringSystemSimulator::addPointsAndSprings()
 {
 	addMassPoint(Vec3(0, 0, 0), Vec3(-1, 0, 0), false);
 	addMassPoint(Vec3(0, 2, 0), Vec3(1, 0, 0), false);
-	addMassPoint(Vec3(1, 2, 0), Vec3(1, 0, 0), false);
+	//addMassPoint(Vec3(1, 2, 0), Vec3(1, 0, 0), false);
 
 	addSpring(0, 1, 1);
-	addSpring(2, 1, 1);
+	//addSpring(2, 1, 1);
 }
