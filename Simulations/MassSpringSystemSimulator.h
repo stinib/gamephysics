@@ -48,8 +48,8 @@ private:
 	float m_fStiffness;
 	float m_fDamping;
 	int m_iIntegrator;
-	//vector<Point> points_;
-	//vector<Spring> springs_;
+	vector<Point> points_;
+	vector<Spring> springs_;
 
 	// UI Attributes
 	Vec3 m_externalForce;

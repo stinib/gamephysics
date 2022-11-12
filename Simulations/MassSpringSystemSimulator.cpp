@@ -2,12 +2,12 @@
 
 // Construtors
 MassSpringSystemSimulator::MassSpringSystemSimulator() {
-	float m_fMass = 10;
-	float m_fStiffness = 40;
-	float m_fDamping = 0;
-	int m_iIntegrator = 0;
+	m_fMass = 10;
+	m_fStiffness = 40;
+	m_fDamping = 0;
+	m_iIntegrator = 0;
 
-	Vec3 m_externalForce = Vec3();
+	m_externalForce = Vec3();
 }
 
 // UI Functions
