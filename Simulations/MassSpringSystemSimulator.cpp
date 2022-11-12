@@ -26,13 +26,15 @@ void MassSpringSystemSimulator::reset() {
 }
 
 void MassSpringSystemSimulator::drawFrame(ID3D11DeviceContext* pd3dImmediateContext) {
-	Vec3 pos{ 0,0,0 };
+	Vec3 pos1{ 0,0,0};
+	Vec3 pos2{ 0,2,0};
 	Vec3 color{ 1,0.5,1 };
-	float scale = 0.01;
+	float scale = 0.05;
 
 	DUC->setUpLighting(Vec3(), 0.4 * Vec3(1, 1, 1), 100, 0.6 * Vec3(0.97, 0.86, 1));
-
-	DUC->drawSphere(pos, scale);
+	DUC->drawSphere(pos1, scale);
+	DUC->drawSphere(pos2, scale);
+	DUC->drawLine(pos2, color, pos1, color);
 }
 
 void MassSpringSystemSimulator::notifyCaseChanged(int testCase)
@@ -55,7 +57,7 @@ void MassSpringSystemSimulator::notifyCaseChanged(int testCase)
 
 void MassSpringSystemSimulator::externalForcesCalculations(float timeElapsed) {} 
 
-	void MassSpringSystemSimulator::simulateTimestep(float timeStep) {}
+void MassSpringSystemSimulator::simulateTimestep(float timeStep) {}
 
 void MassSpringSystemSimulator::onClick(int x, int y) {
 	m_trackmouse.x = x;
