@@ -74,23 +74,53 @@ void MassSpringSystemSimulator::simulateTimestep(float timeStep) {
 	switch (m_iTestCase)
 	{
 	case 0: 
-	default:
+		simulateEuler1StepAndPrintResults(timestep); 
+		break;
+	case 1: 
+		simulateMidpoint1StepAndPrintResults(timestep); 
+		break;
+	default: 
+		cout << "SIMULATE TIMESTEP: Empty Test !";
 		break;
 	}
 }
 
 // helper methods
-void MassSpringSystemSimulator::addPointsAndSprings(){}
-Vec3 MassSpringSystemSimulator::calculateVectorBetween(Vec3 src, Vec3 dts) {}
-float MassSpringSystemSimulator::calculateLengthOfVector(Vec3 d) {}
-Vec3 MassSpringSystemSimulator::normalize(Vec3 d, float len) {}
-Vec3 MassSpringSystemSimulator::calculateForceWithHooke(float k, float l, float L, Vec3 d_norm) {}
-Vec3 MassSpringSystemSimulator::calculateAcceleration(Vec3 f, float m) {}
-Vec3 MassSpringSystemSimulator::calculateEulerUpdate(Vec3 x_old, Vec3 dx_old, float h) {}
+Vec3 MassSpringSystemSimulator::calculateVectorBetween(Vec3 src, Vec3 dst) {
+	return dst - src;
+}
+
+float MassSpringSystemSimulator::calculateLengthOfVector(Vec3 d) {
+	// ||d|| = sqrt( d1^2 + d2^2 + d3^2 )
+	return sqrt( pow(d.x, 2) + pow(d.y, 2) + pow(d.z, 2));
+}
+
+Vec3 MassSpringSystemSimulator::normalize(Vec3 d, float l) {
+	return d / l;
+}
+Vec3 MassSpringSystemSimulator::calculateForceWithHooke(float k, float l, float L, Vec3 d_norm) {
+	return -m_fStiffness * (l - L) * d_norm;
+}
+
+Vec3 MassSpringSystemSimulator::calculateAcceleration(Vec3 f, float m) {
+	return f / m;
+}
+
+Vec3 MassSpringSystemSimulator::calculateEulerUpdate(Vec3 x_old, Vec3 dx_old, float h) {
+	return x_old + dx_old * h;
+}
+
 
 // timestep simulator methods
 void MassSpringSystemSimulator::simulateEuler(float h) {}
+
+void MassSpringSystemSimulator::simulateEuler1StepAndPrintResults(float h) {
+		
+}
+
 void MassSpringSystemSimulator::simulateMidpoint(float h) {}
+
+void MassSpringSystemSimulator::simulateMidpoint1StepAndPrintResults(float h) {}
 
 
 

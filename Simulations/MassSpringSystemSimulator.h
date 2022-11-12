@@ -99,11 +99,12 @@ private:
 	// render constants
 	const Vec3 color{ 1, 0.5, 1 };
 	const float scale{ 0.05 };
+	const float timestep{ 0.1 };
 
 
 	// helper methods
 	void addPointsAndSprings();
-	Vec3 calculateVectorBetween(Vec3 src, Vec3 dts);
+	Vec3 calculateVectorBetween(Vec3 src, Vec3 dst);
 	float calculateLengthOfVector(Vec3 d);
 	Vec3 normalize(Vec3 d, float len);
 	Vec3 calculateForceWithHooke(float k, float l, float L, Vec3 d_norm);
@@ -112,6 +113,9 @@ private:
 
 	// timestep simulator methods
 	void simulateEuler(float h);
+	void simulateEuler1StepAndPrintResults(float h);
+
 	void simulateMidpoint(float h);
+	void simulateMidpoint1StepAndPrintResults(float h);
 };
 #endif
