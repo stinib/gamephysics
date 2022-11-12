@@ -7,6 +7,9 @@ MassSpringSystemSimulator::MassSpringSystemSimulator() {
 	m_fDamping = 0;
 	m_iIntegrator = 0;
 
+	points_ = vector<Point>();
+	springs_ = vector<Spring>();
+
 	m_externalForce = Vec3();
 }
 
@@ -89,10 +92,14 @@ void MassSpringSystemSimulator::setDampingFactor(float damping) {
 }
 
 int MassSpringSystemSimulator::addMassPoint(Vec3 position, Vec3 Velocity, bool isFixed) {
+	//points_.emplace_back(position, Velocity, isFixed);
+	//return points_.size() - 1;
 	return -1;
 }
 
-void MassSpringSystemSimulator::addSpring(int masspoint1, int masspoint2, float initialLength) {}
+void MassSpringSystemSimulator::addSpring(int masspoint1, int masspoint2, float initialLength) {
+	//springs_.emplace_back(masspoint1, masspoint2, initialLength);
+}
 
 int MassSpringSystemSimulator::getNumberOfMassPoints() {
 	return -1;

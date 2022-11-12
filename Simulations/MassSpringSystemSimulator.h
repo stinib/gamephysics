@@ -1,8 +1,6 @@
 #ifndef MASSSPRINGSYSTEMSIMULATOR_h
 #define MASSSPRINGSYSTEMSIMULATOR_h
 #include "Simulator.h"
-#include "Point.h"
-#include "Spring.h"
 
 // Do Not Change
 #define EULER 0
@@ -10,6 +8,45 @@
 #define MIDPOINT 2
 // Do Not Change
 
+class Point {
+public:	
+	
+	// data variables
+	Vec3 position;
+	Vec3 velocity;
+	Vec3 acceleration;
+	bool isFixed;
+
+	Point::Point(Vec3 pos, Vec3 vel, Vec3 acc) {
+		position = pos;
+		velocity = vel;
+		acceleration = acc;
+		isFixed = false;
+	}
+
+	Point::Point(Vec3 pos, Vec3 vel, bool fix) {
+		position = pos;
+		velocity = vel;
+		isFixed = fix;
+		acceleration = Vec3();
+	}
+
+};
+
+class Spring {
+public:
+	Spring(int id1, int id2, float initialLength) {
+		mp1 = id1;
+		mp2 = id2;
+		L = initialLength;
+	}
+
+
+	// data variables
+	int mp1;
+	int mp2;
+	float L;
+};
 
 class MassSpringSystemSimulator:public Simulator{
 public:
