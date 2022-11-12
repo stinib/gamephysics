@@ -1,4 +1,5 @@
 #include "MassSpringSystemSimulator.h"
+#include "MassSpringSystemSimulator.h"
 
 // Construtors
 MassSpringSystemSimulator::MassSpringSystemSimulator() {
@@ -29,12 +30,12 @@ void MassSpringSystemSimulator::reset() {
 }
 
 void MassSpringSystemSimulator::drawFrame(ID3D11DeviceContext* pd3dImmediateContext) {
-	for (auto p : points_) {
+	for (auto &p : points_) {
 		DUC->setUpLighting(Vec3(), 0.4 * Vec3(1, 1, 1), 100, 0.6 * Vec3(0.97, 0.86, 1));
 		DUC->drawSphere(p.position, scale);
 	}
 
-	for (auto sp : springs_)
+	for (auto &sp : springs_)
 	{
 		Point p1 = points_.at(sp.mp1);
 		Point p2 = points_.at(sp.mp2);
@@ -45,12 +46,11 @@ void MassSpringSystemSimulator::drawFrame(ID3D11DeviceContext* pd3dImmediateCont
 	}
 }
 
+
+
 void MassSpringSystemSimulator::notifyCaseChanged(int testCase)
 {
-	addMassPoint(Vec3(0, 0, 0), Vec3(-1, 0, 0), false);
-	addMassPoint(Vec3(0, 2, 0), Vec3(1, 0, 0), false);
-	addSpring(0,1, 1);
-
+	addPointsAndSprings();
 
 	m_iTestCase = testCase;
 
@@ -126,3 +126,11 @@ Vec3 MassSpringSystemSimulator::getVelocityOfMassPoint(int index) {
 }
 
 void MassSpringSystemSimulator::applyExternalForce(Vec3 force) {}
+
+void MassSpringSystemSimulator::addPointsAndSprings()
+{
+	addMassPoint(Vec3(0, 0, 0), Vec3(-1, 0, 0), false);
+	addMassPoint(Vec3(0, 2, 0), Vec3(1, 0, 0), false);
+	addMassPoint(Vec3(1, 2, 0), Vec3(1, 0, 0), false);
+	addSpring(0, 1, 1);
+}

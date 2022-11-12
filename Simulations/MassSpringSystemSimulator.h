@@ -99,5 +99,9 @@ private:
 	// render constants
 	const Vec3 color{ 1, 0.5, 1 };
 	const float scale{ 0.05 };
+
+
+	// helper methods
+	void addPointsAndSprings();
 };
 #endif
