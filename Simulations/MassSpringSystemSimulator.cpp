@@ -34,7 +34,10 @@ void MassSpringSystemSimulator::drawFrame(ID3D11DeviceContext* pd3dImmediateCont
 	DUC->setUpLighting(Vec3(), 0.4 * Vec3(1, 1, 1), 100, 0.6 * Vec3(0.97, 0.86, 1));
 	DUC->drawSphere(pos1, scale);
 	DUC->drawSphere(pos2, scale);
+	DUC->beginLine();
 	DUC->drawLine(pos2, color, pos1, color);
+	DUC->endLine();
+
 }
 
 void MassSpringSystemSimulator::notifyCaseChanged(int testCase)
