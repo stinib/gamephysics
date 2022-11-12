@@ -1,5 +1,7 @@
 #include "MassSpringSystemSimulator.h"
 #include "MassSpringSystemSimulator.h"
+#include "MassSpringSystemSimulator.h"
+#include "MassSpringSystemSimulator.h"
 
 // Construtors
 MassSpringSystemSimulator::MassSpringSystemSimulator() {
@@ -71,16 +73,19 @@ void MassSpringSystemSimulator::notifyCaseChanged(int testCase)
 void MassSpringSystemSimulator::externalForcesCalculations(float timeElapsed) {} 
 
 void MassSpringSystemSimulator::simulateTimestep(float timeStep) {
+	currentTime += timestep;
+
 	switch (m_iTestCase)
 	{
 	case 0: 
-		simulateEuler1StepAndPrintResults(timestep); 
+		
+		simulateEuler1StepAndPrintResults(currentTime); 
 		break;
 	case 1: 
-		simulateMidpoint1StepAndPrintResults(timestep); 
+		simulateMidpoint1StepAndPrintResults(currentTime);
 		break;
 	default: 
-		cout << "SIMULATE TIMESTEP: Empty Test !";
+		print("SIMULATE TIMESTEP: Empty Test !");
 		break;
 	}
 }
@@ -115,12 +120,51 @@ Vec3 MassSpringSystemSimulator::calculateEulerUpdate(Vec3 x_old, Vec3 dx_old, fl
 void MassSpringSystemSimulator::simulateEuler(float h) {}
 
 void MassSpringSystemSimulator::simulateEuler1StepAndPrintResults(float h) {
-		
+	print("Euler Printing:");
+
+	simulateNextEulerStep(h);
+
+}
+
+void MassSpringSystemSimulator::simulateNextEulerStep(float h)
+{
+	for (auto& sp : springs_)
+	{	
+		// 0. get points
+		Point& point1 = points_.at(sp.mp1);
+		Point& point2 = points_.at(sp.mp2);
+
+		// 1. calc normalized vectors
+		Vec3 d1 = calculateVectorBetween(point2.position, point1.position);
+		float l = calculateLengthOfVector(d1);
+		Vec3 d1_norm = normalize(d1, l);
+		Vec3 d2_norm = -d1_norm;
+
+		// 2. calc Hooke Forces
+		Vec3 f1 = calculateForceWithHooke(m_fStiffness, l, sp.L, d1_norm);
+		Vec3 f2 = -f1;
+
+		// 3. update point attributes
+		point1.acceleration = calculateAcceleration(f1, m_fMass);
+		point2.acceleration = calculateAcceleration(f2, m_fMass);
+
+		point1.position = calculateEulerUpdate(point1.position, point1.velocity, h);
+		point2.position = calculateEulerUpdate(point2.position, point2.velocity, h);
+
+		point1.velocity = calculateEulerUpdate(point1.velocity, point1.acceleration, h);
+		point2.velocity = calculateEulerUpdate(point2.velocity, point2.acceleration, h);
+	}
+	
 }
 
 void MassSpringSystemSimulator::simulateMidpoint(float h) {}
 
 void MassSpringSystemSimulator::simulateMidpoint1StepAndPrintResults(float h) {}
+
+void MassSpringSystemSimulator::print(string message)
+{
+	cout << message << endl;
+}
 
 
 

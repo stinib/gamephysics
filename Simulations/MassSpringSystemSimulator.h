@@ -87,6 +87,9 @@ private:
 	float m_fStiffness;
 	float m_fDamping;
 	int m_iIntegrator;
+
+	float currentTime{ 0 };
+
 	vector<Point> points_;
 	vector<Spring> springs_;
 
@@ -114,8 +117,12 @@ private:
 	// timestep simulator methods
 	void simulateEuler(float h);
 	void simulateEuler1StepAndPrintResults(float h);
+	void simulateNextEulerStep(float h);
 
 	void simulateMidpoint(float h);
 	void simulateMidpoint1StepAndPrintResults(float h);
+
+	// debug
+	void print(string message);
 };
 #endif
