@@ -95,5 +95,9 @@ private:
 	Point2D m_mouse;
 	Point2D m_trackmouse;
 	Point2D m_oldtrackmouse;
+
+	// render constants
+	const Vec3 color{ 1, 0.5, 1 };
+	const float scale{ 0.05 };
 };
 #endif

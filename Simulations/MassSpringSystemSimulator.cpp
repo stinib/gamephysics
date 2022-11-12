@@ -29,22 +29,29 @@ void MassSpringSystemSimulator::reset() {
 }
 
 void MassSpringSystemSimulator::drawFrame(ID3D11DeviceContext* pd3dImmediateContext) {
-	Vec3 pos1{ 0,0,0};
-	Vec3 pos2{ 0,2,0};
-	Vec3 color{ 1,0.5,1 };
-	float scale = 0.05;
+	for (auto p : points_) {
+		DUC->setUpLighting(Vec3(), 0.4 * Vec3(1, 1, 1), 100, 0.6 * Vec3(0.97, 0.86, 1));
+		DUC->drawSphere(p.position, scale);
+	}
 
-	DUC->setUpLighting(Vec3(), 0.4 * Vec3(1, 1, 1), 100, 0.6 * Vec3(0.97, 0.86, 1));
-	DUC->drawSphere(pos1, scale);
-	DUC->drawSphere(pos2, scale);
-	DUC->beginLine();
-	DUC->drawLine(pos2, color, pos1, color);
-	DUC->endLine();
+	for (auto sp : springs_)
+	{
+		Point p1 = points_.at(sp.mp1);
+		Point p2 = points_.at(sp.mp2);
 
+		DUC->beginLine();
+		DUC->drawLine(p1.position, color, p2.position, color);
+		DUC->endLine();
+	}
 }
 
 void MassSpringSystemSimulator::notifyCaseChanged(int testCase)
 {
+	addMassPoint(Vec3(0, 0, 0), Vec3(-1, 0, 0), false);
+	addMassPoint(Vec3(0, 2, 0), Vec3(1, 0, 0), false);
+	addSpring(0,1, 1);
+
+
 	m_iTestCase = testCase;
 
 	switch (m_iTestCase)
@@ -92,29 +99,30 @@ void MassSpringSystemSimulator::setDampingFactor(float damping) {
 }
 
 int MassSpringSystemSimulator::addMassPoint(Vec3 position, Vec3 Velocity, bool isFixed) {
-	//points_.emplace_back(position, Velocity, isFixed);
-	//return points_.size() - 1;
+	points_.emplace_back(position, Velocity, isFixed);
+	return points_.size() - 1;
 	return -1;
 }
 
 void MassSpringSystemSimulator::addSpring(int masspoint1, int masspoint2, float initialLength) {
-	//springs_.emplace_back(masspoint1, masspoint2, initialLength);
+	springs_.emplace_back(masspoint1, masspoint2, initialLength);
 }
 
 int MassSpringSystemSimulator::getNumberOfMassPoints() {
-	return -1;
+	return points_.size();;
 }
 
 int MassSpringSystemSimulator::getNumberOfSprings() {
-	return -1;
+	return springs_.size();;
 }
 
 Vec3 MassSpringSystemSimulator::getPositionOfMassPoint(int index) {
-	return Vec3();
+	return points_.at(index).position;
 }
 
 Vec3 MassSpringSystemSimulator::getVelocityOfMassPoint(int index) {
-	return Vec3();
+	return points_.at(index).velocity;
+
 }
 
 void MassSpringSystemSimulator::applyExternalForce(Vec3 force) {}
