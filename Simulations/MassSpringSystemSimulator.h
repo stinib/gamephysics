@@ -117,12 +117,14 @@ private:
 	// timestep simulator methods
 	void simulateEuler(float h);
 	void simulateEuler1StepAndPrintResults(float h);
-	void simulateNextEulerStep(float h);
+	void simulateNextEulerStep(float h, bool printResults);
 
 	void simulateMidpoint(float h);
 	void simulateMidpoint1StepAndPrintResults(float h);
 
 	// debug
 	void print(string message);
+	void print(string message, Vec3 value);
+	string toString(Vec3 vector);
 };
 #endif

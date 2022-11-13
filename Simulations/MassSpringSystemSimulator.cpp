@@ -1,7 +1,6 @@
 #include "MassSpringSystemSimulator.h"
-#include "MassSpringSystemSimulator.h"
-#include "MassSpringSystemSimulator.h"
-#include "MassSpringSystemSimulator.h"
+
+/// C:\Users\kerst\source\repos\gamephysics
 
 // Construtors
 MassSpringSystemSimulator::MassSpringSystemSimulator() {
@@ -10,7 +9,7 @@ MassSpringSystemSimulator::MassSpringSystemSimulator() {
 	m_fDamping = 0;
 	m_iIntegrator = 0;
 
-	currentTime = -timestep;
+	currentTime = 0;
 
 	points_ = vector<Point>();
 	springs_ = vector<Spring>();
@@ -75,16 +74,18 @@ void MassSpringSystemSimulator::notifyCaseChanged(int testCase)
 void MassSpringSystemSimulator::externalForcesCalculations(float timeElapsed) {} 
 
 void MassSpringSystemSimulator::simulateTimestep(float timeStep) {
-	currentTime += timestep;
-	if (currentTime > 0) return;
+	currentTime += timeStep;
+	//if (currentTime > 0.15) return;
+
+	//cout << "current time: " << currentTime << endl << endl;
 
 	switch (m_iTestCase)
 	{
 	case 0: 
-		simulateEuler1StepAndPrintResults(currentTime); 
+		simulateEuler(timeStep); 
 		break;
 	case 1: 
-		simulateMidpoint1StepAndPrintResults(currentTime);
+		simulateMidpoint1StepAndPrintResults(timeStep);
 		break;
 	default: 
 		print("SIMULATE TIMESTEP: Empty Test !");
@@ -110,31 +111,22 @@ Vec3 MassSpringSystemSimulator::calculateForceWithHooke(float k, float l, float 
 }
 
 Vec3 MassSpringSystemSimulator::calculateAcceleration(Vec3 f, float m) {
+	// TODO: add gravity later
 	return f / m;
 }
 
 Vec3 MassSpringSystemSimulator::calculateEulerUpdate(Vec3 x_old, Vec3 dx_old, float h) {
-	return x_old + dx_old * h;
+	return x_old + (dx_old * h);
 }
 
 
 // timestep simulator methods
-void MassSpringSystemSimulator::simulateEuler(float h) {}
-
-void MassSpringSystemSimulator::simulateEuler1StepAndPrintResults(float h) {
-	print("Euler Printing:");
-
-	simulateNextEulerStep(h);
-
-}
-
-void MassSpringSystemSimulator::simulateNextEulerStep(float h)
-{
+void MassSpringSystemSimulator::simulateEuler(float h) {
 	for (auto& sp : springs_)
-	{	
+	{
 		// 0. get points
-		Point& point1 = points_.at(sp.mp1);
 		Point& point2 = points_.at(sp.mp2);
+		Point& point1 = points_.at(sp.mp1);
 
 		// 1. calc normalized vectors
 		Vec3 d1 = calculateVectorBetween(point2.position, point1.position);
@@ -156,6 +148,54 @@ void MassSpringSystemSimulator::simulateNextEulerStep(float h)
 		point1.velocity = calculateEulerUpdate(point1.velocity, point1.acceleration, h);
 		point2.velocity = calculateEulerUpdate(point2.velocity, point2.acceleration, h);
 	}
+}
+
+void MassSpringSystemSimulator::simulateEuler1StepAndPrintResults(float h) {
+
+	print("Euler Results:");
+	simulateNextEulerStep(h, true);
+}
+
+void MassSpringSystemSimulator::simulateNextEulerStep(float h, bool printResults)
+{
+	cout << h << endl;
+	for (auto& sp : springs_)
+	{	
+		// 0. get points
+		Point& point2 = points_.at(sp.mp2);														cout << "index 2: " << sp.mp2 << " should be: 1" << endl;
+		Point& point1 = points_.at(sp.mp1);														cout << "index 1: " << sp.mp1 << " should be: 0" << endl;
+
+		// 1. calc normalized vectors
+		Vec3 d1 = calculateVectorBetween(point2.position, point1.position);						cout << "d1: " << toString(d1)  << " should be: (0, -2, 0)" << endl;
+		float l = calculateLengthOfVector(d1);													cout << "l: " << l << " should be: 2" << endl;
+		Vec3 d1_norm = normalize(d1, l);														cout << "d1_norm: " << toString(d1_norm) << " should be: (0, -1, 0)" << endl;
+		Vec3 d2_norm = -d1_norm;																cout << "d2_norm: " << toString(d2_norm) << " should be: (0, 1, 0)" << endl;
+
+		// 2. calc Hooke Forces
+		Vec3 f1 = calculateForceWithHooke(m_fStiffness, l, sp.L, d1_norm);						cout << "f1: " << toString(f1) << " should be: (0, 40, 0)" << endl;
+		Vec3 f2 = -f1;																			cout << "f2: " << toString(f2) << " should be: (0, -40, 0)" << endl;
+			
+		// 3. update point attributes
+		point1.acceleration = calculateAcceleration(f1, m_fMass);								cout << "a1: " << toString(point1.acceleration) << " should be: (0, 4, 0)" << endl;
+		point2.acceleration = calculateAcceleration(f2, m_fMass);								cout << "a2: " << toString(point2.acceleration) << " should be: (0, -4, 0)" << endl;
+
+		point1.position = calculateEulerUpdate(point1.position, point1.velocity, h);			cout << "p1: " << toString(point1.position) << " should be: (-0.1, 0, 0)" << endl;
+		point2.position = calculateEulerUpdate(point2.position, point2.velocity, h);			cout << "p2: " << toString(point2.position) << " should be: (0.1, 2, 0)" << endl;
+			
+		point1.velocity = calculateEulerUpdate(point1.velocity, point1.acceleration, h);		cout << "v1: " << toString(point1.velocity) << " should be: (-1, 0.4, 0)" << endl;
+		point2.velocity = calculateEulerUpdate(point2.velocity, point2.acceleration, h);		cout << "v2: " << toString(point2.velocity) << " should be: (1, -0.4, 0)" << endl;
+
+		//if (printResults)
+		/* {
+			print("p1.p = ", point1.position);
+			print("p1.v = ", point1.velocity);
+			print("p1.a = ", point1.acceleration);
+			print("");
+			print("p2.p = ", point2.position);
+			print("p2.v = ", point2.velocity);
+			print("p2.a = ", point2.acceleration);
+		}*/
+	}
 	
 }
 
@@ -166,6 +206,19 @@ void MassSpringSystemSimulator::simulateMidpoint1StepAndPrintResults(float h) {}
 void MassSpringSystemSimulator::print(string message)
 {
 	cout << message << endl;
+}
+
+
+void MassSpringSystemSimulator::print(string message, Vec3 value)
+{
+	cout << message << " = (" << value.x << ", " << value.y << ", " << value.z << ") " << endl;
+}
+
+string MassSpringSystemSimulator::toString(Vec3 vector)
+{
+	stringstream ss;
+	ss << "( " << vector.x << ", " << vector.y << ", " << vector.z << " )";
+	return ss.rdbuf()->str();
 }
 
 
@@ -199,7 +252,6 @@ void MassSpringSystemSimulator::setDampingFactor(float damping) {
 int MassSpringSystemSimulator::addMassPoint(Vec3 position, Vec3 Velocity, bool isFixed) {
 	points_.emplace_back(position, Velocity, isFixed);
 	return points_.size() - 1;
-	return -1;
 }
 
 void MassSpringSystemSimulator::addSpring(int masspoint1, int masspoint2, float initialLength) {
@@ -227,10 +279,14 @@ void MassSpringSystemSimulator::applyExternalForce(Vec3 force) {}
 
 void MassSpringSystemSimulator::addPointsAndSprings()
 {
-	addMassPoint(Vec3(0, 0, 0), Vec3(-1, 0, 0), false);
-	addMassPoint(Vec3(0, 2, 0), Vec3(1, 0, 0), false);
+	setMass(10);
+	setStiffness(40);
+	setDampingFactor(0);
+
+	int p1_id = addMassPoint(Vec3(0, 0, 0), Vec3(-1, 0, 0), false);
+	int p2_id = addMassPoint(Vec3(0, 2, 0), Vec3(1, 0, 0), false);
 	//addMassPoint(Vec3(1, 2, 0), Vec3(1, 0, 0), false);
 
-	addSpring(0, 1, 1);
+	addSpring(p1_id, p2_id, 1);
 	//addSpring(2, 1, 1);
 }
