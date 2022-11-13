@@ -75,17 +75,14 @@ void MassSpringSystemSimulator::externalForcesCalculations(float timeElapsed) {}
 
 void MassSpringSystemSimulator::simulateTimestep(float timeStep) {
 	currentTime += timeStep;
-	//if (currentTime > 0.15) return;
-
-	//cout << "current time: " << currentTime << endl << endl;
 
 	switch (m_iTestCase)
 	{
 	case 0: 
-		simulateEuler(timeStep); 
+		simulateEuler(timeStep, false); 
 		break;
 	case 1: 
-		simulateMidpoint1StepAndPrintResults(timeStep);
+		simulateMidpoint(timeStep, true);
 		break;
 	default: 
 		print("SIMULATE TIMESTEP: Empty Test !");
@@ -121,72 +118,36 @@ Vec3 MassSpringSystemSimulator::calculateEulerUpdate(Vec3 x_old, Vec3 dx_old, fl
 
 
 // timestep simulator methods
-void MassSpringSystemSimulator::simulateEuler(float h) {
-	for (auto& sp : springs_)
-	{
-		// 0. get points
-		Point& point2 = points_.at(sp.mp2);
-		Point& point1 = points_.at(sp.mp1);
-
-		// 1. calc normalized vectors
-		Vec3 d1 = calculateVectorBetween(point2.position, point1.position);
-		float l = calculateLengthOfVector(d1);
-		Vec3 d1_norm = normalize(d1, l);
-		Vec3 d2_norm = -d1_norm;
-
-		// 2. calc Hooke Forces
-		Vec3 f1 = calculateForceWithHooke(m_fStiffness, l, sp.L, d1_norm);
-		Vec3 f2 = -f1;
-
-		// 3. update point attributes
-		point1.acceleration = calculateAcceleration(f1, m_fMass);
-		point2.acceleration = calculateAcceleration(f2, m_fMass);
-
-		point1.position = calculateEulerUpdate(point1.position, point1.velocity, h);
-		point2.position = calculateEulerUpdate(point2.position, point2.velocity, h);
-
-		point1.velocity = calculateEulerUpdate(point1.velocity, point1.acceleration, h);
-		point2.velocity = calculateEulerUpdate(point2.velocity, point2.acceleration, h);
-	}
-}
-
-void MassSpringSystemSimulator::simulateEuler1StepAndPrintResults(float h) {
-
-	print("Euler Results:");
-	simulateNextEulerStep(h, true);
-}
-
-void MassSpringSystemSimulator::simulateNextEulerStep(float h, bool printResults)
+void MassSpringSystemSimulator::simulateEuler(float h, bool printResults)
 {
-	cout << h << endl;
+	//cout << h << endl;
 	for (auto& sp : springs_)
 	{	
 		// 0. get points
-		Point& point2 = points_.at(sp.mp2);														cout << "index 2: " << sp.mp2 << " should be: 1" << endl;
-		Point& point1 = points_.at(sp.mp1);														cout << "index 1: " << sp.mp1 << " should be: 0" << endl;
+		Point& point2 = points_.at(sp.mp2);														
+		Point& point1 = points_.at(sp.mp1);														
 
 		// 1. calc normalized vectors
-		Vec3 d1 = calculateVectorBetween(point2.position, point1.position);						cout << "d1: " << toString(d1)  << " should be: (0, -2, 0)" << endl;
-		float l = calculateLengthOfVector(d1);													cout << "l: " << l << " should be: 2" << endl;
-		Vec3 d1_norm = normalize(d1, l);														cout << "d1_norm: " << toString(d1_norm) << " should be: (0, -1, 0)" << endl;
-		Vec3 d2_norm = -d1_norm;																cout << "d2_norm: " << toString(d2_norm) << " should be: (0, 1, 0)" << endl;
+		Vec3 d1 = calculateVectorBetween(point2.position, point1.position);						
+		float l = calculateLengthOfVector(d1);													
+		Vec3 d1_norm = normalize(d1, l);														
 
 		// 2. calc Hooke Forces
-		Vec3 f1 = calculateForceWithHooke(m_fStiffness, l, sp.L, d1_norm);						cout << "f1: " << toString(f1) << " should be: (0, 40, 0)" << endl;
-		Vec3 f2 = -f1;																			cout << "f2: " << toString(f2) << " should be: (0, -40, 0)" << endl;
+		Vec3 f1 = calculateForceWithHooke(m_fStiffness, l, sp.L, d1_norm);						
+		Vec3 f2 = -f1;																			
 			
 		// 3. update point attributes
-		point1.acceleration = calculateAcceleration(f1, m_fMass);								cout << "a1: " << toString(point1.acceleration) << " should be: (0, 4, 0)" << endl;
-		point2.acceleration = calculateAcceleration(f2, m_fMass);								cout << "a2: " << toString(point2.acceleration) << " should be: (0, -4, 0)" << endl;
+		point1.acceleration = calculateAcceleration(f1, m_fMass);								
+		point2.acceleration = calculateAcceleration(f2, m_fMass);								
 
-		point1.position = calculateEulerUpdate(point1.position, point1.velocity, h);			cout << "p1: " << toString(point1.position) << " should be: (-0.1, 0, 0)" << endl;
-		point2.position = calculateEulerUpdate(point2.position, point2.velocity, h);			cout << "p2: " << toString(point2.position) << " should be: (0.1, 2, 0)" << endl;
+		point1.position = calculateEulerUpdate(point1.position, point1.velocity, h);			
+		point2.position = calculateEulerUpdate(point2.position, point2.velocity, h);			
 			
-		point1.velocity = calculateEulerUpdate(point1.velocity, point1.acceleration, h);		cout << "v1: " << toString(point1.velocity) << " should be: (-1, 0.4, 0)" << endl;
-		point2.velocity = calculateEulerUpdate(point2.velocity, point2.acceleration, h);		cout << "v2: " << toString(point2.velocity) << " should be: (1, -0.4, 0)" << endl;
+		point1.velocity = calculateEulerUpdate(point1.velocity, point1.acceleration, h);		
+		point2.velocity = calculateEulerUpdate(point2.velocity, point2.acceleration, h);		
 
-		//if (printResults)
-		/* {
+		if (printResults)
+		{
 			print("p1.p = ", point1.position);
 			print("p1.v = ", point1.velocity);
 			print("p1.a = ", point1.acceleration);
@@ -194,14 +155,67 @@ void MassSpringSystemSimulator::simulateNextEulerStep(float h, bool printResults
 			print("p2.p = ", point2.position);
 			print("p2.v = ", point2.velocity);
 			print("p2.a = ", point2.acceleration);
-		}*/
+		}
 	}
 	
 }
 
-void MassSpringSystemSimulator::simulateMidpoint(float h) {}
+void MassSpringSystemSimulator::simulateMidpoint(float h, bool printResults) {
+	for (auto& sp : springs_) {
+		// calculate d_norm, F -> a for t = 0
+		Point& point1 = points_.at(sp.mp1);
+		Point& point2 = points_.at(sp.mp2);
 
-void MassSpringSystemSimulator::simulateMidpoint1StepAndPrintResults(float h) {}
+		Vec3 d1 = calculateVectorBetween(point2.position, point1.position);
+		float l = calculateLengthOfVector(d1);
+		Vec3 d1_norm = normalize(d1, l);
+
+		Vec3 f1 = calculateForceWithHooke(m_fStiffness, l, sp.L, d1_norm);
+		Vec3 f2 = -f1;
+
+		point1.acceleration = calculateAcceleration(f1, m_fMass);
+		point2.acceleration = calculateAcceleration(f2, m_fMass);
+
+
+		// calculate p~,v~,a~ for t = h/2 as usual
+		float midTimeStep = h / 2;
+		Vec3 p1_tilde = calculateEulerUpdate(point1.position, point1.velocity,  midTimeStep);
+		Vec3 p2_tilde = calculateEulerUpdate(point2.position, point2.velocity,  midTimeStep);
+
+		Vec3 v1_tilde = calculateEulerUpdate(point1.velocity, point1.acceleration, midTimeStep);
+		Vec3 v2_tilde = calculateEulerUpdate(point2.velocity, point2.acceleration, midTimeStep);
+
+		Vec3 d1_tilde = calculateVectorBetween(p2_tilde, p1_tilde);
+		float l_tilde = calculateLengthOfVector(d1_tilde);
+		Vec3 d1_norm_tilde = normalize(d1_tilde, l_tilde);
+
+		Vec3 f1_tilde = calculateForceWithHooke(m_fStiffness, l_tilde, sp.L, d1_norm_tilde);
+		Vec3 f2_tilde = -f1_tilde;
+
+		Vec3 a1_tilde = calculateAcceleration(f1_tilde, m_fMass);
+		Vec3 a2_tilde = calculateAcceleration(f2_tilde, m_fMass);
+
+
+		// Euler Update: x = x(0) + x'(h/2) * h
+		point1.position = calculateEulerUpdate(point1.position, v1_tilde, h);
+		point2.position = calculateEulerUpdate(point2.position, v2_tilde, h);
+
+		point1.velocity = calculateEulerUpdate(point1.velocity, a1_tilde, h);
+		point2.velocity = calculateEulerUpdate(point2.velocity, a2_tilde, h);
+
+
+		if (printResults)
+		{
+			print("p1.p = ", point1.position);
+			print("p1.v = ", point1.velocity);
+			print("p1.a = ", point1.acceleration);
+			print("");
+			print("p2.p = ", point2.position);
+			print("p2.v = ", point2.velocity);
+			print("p2.a = ", point2.acceleration);
+		}
+	}
+}
 
 void MassSpringSystemSimulator::print(string message)
 {
@@ -272,7 +286,6 @@ Vec3 MassSpringSystemSimulator::getPositionOfMassPoint(int index) {
 
 Vec3 MassSpringSystemSimulator::getVelocityOfMassPoint(int index) {
 	return points_.at(index).velocity;
-
 }
 
 void MassSpringSystemSimulator::applyExternalForce(Vec3 force) {}
@@ -285,8 +298,8 @@ void MassSpringSystemSimulator::addPointsAndSprings()
 
 	int p1_id = addMassPoint(Vec3(0, 0, 0), Vec3(-1, 0, 0), false);
 	int p2_id = addMassPoint(Vec3(0, 2, 0), Vec3(1, 0, 0), false);
-	//addMassPoint(Vec3(1, 2, 0), Vec3(1, 0, 0), false);
+	addMassPoint(Vec3(1, 2, 0), Vec3(1, 0, 0), false);
 
 	addSpring(p1_id, p2_id, 1);
-	//addSpring(2, 1, 1);
+	addSpring(2, 1, 1);
 }

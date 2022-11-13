@@ -115,12 +115,9 @@ private:
 	Vec3 calculateEulerUpdate(Vec3 x_old, Vec3 dx_old, float h);
 
 	// timestep simulator methods
-	void simulateEuler(float h);
-	void simulateEuler1StepAndPrintResults(float h);
-	void simulateNextEulerStep(float h, bool printResults);
+	void simulateEuler(float h, bool printResult);
 
-	void simulateMidpoint(float h);
-	void simulateMidpoint1StepAndPrintResults(float h);
+	void simulateMidpoint(float h, bool printResults);
 
 	// debug
 	void print(string message);
