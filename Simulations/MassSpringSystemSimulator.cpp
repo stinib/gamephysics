@@ -73,8 +73,13 @@ void MassSpringSystemSimulator::notifyCaseChanged(int testCase)
 
 void MassSpringSystemSimulator::externalForcesCalculations(float timeElapsed) {} 
 
+
+/// timestep simulator methods
 void MassSpringSystemSimulator::simulateTimestep(float timeStep) {
+	timeStep = 0.1;
 	currentTime += timeStep;
+	if (currentTime > 0.15) return;
+	m_iTestCase = 1;
 
 	switch (m_iTestCase)
 	{
@@ -82,7 +87,7 @@ void MassSpringSystemSimulator::simulateTimestep(float timeStep) {
 		simulateEuler(timeStep, false); 
 		break;
 	case 1: 
-		simulateMidpoint(timeStep, true);
+		simulateMidpoint(0.1, true);
 		break;
 	default: 
 		print("SIMULATE TIMESTEP: Empty Test !");
@@ -90,34 +95,7 @@ void MassSpringSystemSimulator::simulateTimestep(float timeStep) {
 	}
 }
 
-// helper methods
-Vec3 MassSpringSystemSimulator::calculateVectorBetween(Vec3 src, Vec3 dst) {
-	return dst - src;
-}
 
-float MassSpringSystemSimulator::calculateLengthOfVector(Vec3 d) {
-	// ||d|| = sqrt( d1^2 + d2^2 + d3^2 )
-	return sqrt( pow(d.x, 2) + pow(d.y, 2) + pow(d.z, 2));
-}
-
-Vec3 MassSpringSystemSimulator::normalize(Vec3 d, float l) {
-	return d / l;
-}
-Vec3 MassSpringSystemSimulator::calculateForceWithHooke(float k, float l, float L, Vec3 d_norm) {
-	return -m_fStiffness * (l - L) * d_norm;
-}
-
-Vec3 MassSpringSystemSimulator::calculateAcceleration(Vec3 f, float m) {
-	// TODO: add gravity later
-	return f / m;
-}
-
-Vec3 MassSpringSystemSimulator::calculateEulerUpdate(Vec3 x_old, Vec3 dx_old, float h) {
-	return x_old + (dx_old * h);
-}
-
-
-// timestep simulator methods
 void MassSpringSystemSimulator::simulateEuler(float h, bool printResults)
 {
 	//cout << h << endl;
@@ -215,6 +193,32 @@ void MassSpringSystemSimulator::simulateMidpoint(float h, bool printResults) {
 			print("p2.a = ", point2.acceleration);
 		}
 	}
+}
+
+// helper methods
+Vec3 MassSpringSystemSimulator::calculateVectorBetween(Vec3 src, Vec3 dst) {
+	return dst - src;
+}
+
+float MassSpringSystemSimulator::calculateLengthOfVector(Vec3 d) {
+	// ||d|| = sqrt( d1^2 + d2^2 + d3^2 )
+	return sqrt(pow(d.x, 2) + pow(d.y, 2) + pow(d.z, 2));
+}
+
+Vec3 MassSpringSystemSimulator::normalize(Vec3 d, float l) {
+	return d / l;
+}
+Vec3 MassSpringSystemSimulator::calculateForceWithHooke(float k, float l, float L, Vec3 d_norm) {
+	return -m_fStiffness * (l - L) * d_norm;
+}
+
+Vec3 MassSpringSystemSimulator::calculateAcceleration(Vec3 f, float m) {
+	// TODO: add gravity later
+	return f / m;
+}
+
+Vec3 MassSpringSystemSimulator::calculateEulerUpdate(Vec3 x_old, Vec3 dx_old, float h) {
+	return x_old + (dx_old * h);
 }
 
 void MassSpringSystemSimulator::print(string message)
